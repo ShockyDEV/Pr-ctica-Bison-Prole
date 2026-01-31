@@ -24,8 +24,9 @@ char* new_label() {
 /* Tokens de estructura y E/S */
 %token PROGRAMA INICIO FIN PUNTO COMA MUESTRA
 /* Tokens de verbos y preposiciones */
-%token MUEVE A SUMA RESTA DE MULTIPLICA POR DIVIDE ENTRE DANDO CALCULA FIN_CALCULA
+%token MUEVE A SUMA RESTA DE MULTIPLICA POR DIVIDE ENTRE DANDO CALCULA FIN_CALCULA 
 %token SI ENTONCES SINO FIN_SI ES NO MAYOR MENOR QUE IGUAL
+%token EJECUTA VECES HASTA FIN_EJECUTA
 %token <num> NUM
 %token <string> ID CAD
 
@@ -37,7 +38,7 @@ char* new_label() {
 %left '*' '/'
 
 /* Tipos de los no terminales */
-%type <string> axioma sentencias sentencia lista_literales literal expr asignar comparar condicion
+%type <string> axioma sentencias sentencia lista_literales literal expr asignar comparar condicion bucle
 
 %%
 
@@ -58,6 +59,7 @@ sentencias: sentencia { $$ = $1; }
 sentencia: MUESTRA lista_literales PUNTO { $$ = $2; }
          | asignar PUNTO { $$ = $1; }
 		 | comparar PUNTO { $$ = $1; }
+		 | bucle PUNTO { $$ = $1; }
          ;
 		 
 /* Estructura IF-THEN-ELSE */
@@ -74,6 +76,23 @@ comparar: SI condicion ENTONCES sentencias FIN_SI {
             free($2); free($4); free($6); free(l1); free(l2);
          }
          ;
+		 
+		 /* Lógica de bucles con etiquetas y saltos */
+bucle: 
+    EJECUTA sentencias HASTA QUE condicion FIN_EJECUTA {
+        /* Bucle de post-condición, se ejecuta y luego comprueba si repite */
+        char *l_inicio = new_label();
+        secure(asprintf(&$$, "%s:\n%s%s\tsifalsovea %s\n", l_inicio, $2, $5, l_inicio));
+        free($2); free($5); free(l_inicio);
+    }
+    | EJECUTA expr VECES sentencias FIN_EJECUTA {
+        /* Bucle de conteo simple para la pila */
+        char *l_inicio = new_label();
+        char *l_fin = new_label();
+        secure(asprintf(&$$, "%s\n%s:\n%s\tvea %s\n%s:\n", $2, l_inicio, $4, l_inicio, l_fin));
+        free($2); free($4); free(l_inicio); free(l_fin);
+    }
+    ;
 		 
 		 /* Lógica de comparación */
 condicion: expr ES MAYOR QUE expr {

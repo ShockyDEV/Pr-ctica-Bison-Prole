@@ -82,9 +82,13 @@ extern int yydebug;
     MENOR = 283,                   /* MENOR  */
     QUE = 284,                     /* QUE  */
     IGUAL = 285,                   /* IGUAL  */
-    NUM = 286,                     /* NUM  */
-    ID = 287,                      /* ID  */
-    CAD = 288                      /* CAD  */
+    EJECUTA = 286,                 /* EJECUTA  */
+    VECES = 287,                   /* VECES  */
+    HASTA = 288,                   /* HASTA  */
+    FIN_EJECUTA = 289,             /* FIN_EJECUTA  */
+    NUM = 290,                     /* NUM  */
+    ID = 291,                      /* ID  */
+    CAD = 292                      /* CAD  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -121,9 +125,13 @@ extern int yydebug;
 #define MENOR 283
 #define QUE 284
 #define IGUAL 285
-#define NUM 286
-#define ID 287
-#define CAD 288
+#define EJECUTA 286
+#define VECES 287
+#define HASTA 288
+#define FIN_EJECUTA 289
+#define NUM 290
+#define ID 291
+#define CAD 292
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -134,7 +142,7 @@ union YYSTYPE
     int num;
     char *string;
 
-#line 138 "y.tab.h"
+#line 146 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

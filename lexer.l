@@ -30,6 +30,14 @@
 "QUE"         { return QUE; }
 "IGUAL"       { return IGUAL; }
 
+
+ /* Tokens de bucle */
+ 
+"EJECUTA"     { return EJECUTA; }
+"VECES"       { return VECES; }
+"HASTA"       { return HASTA; }
+"FIN-EJECUTA" { return FIN_EJECUTA; }
+
 "MUEVE"       { return MUEVE; }
 "A"           { return A; }
 "SUMA"        { return SUMA; }
