@@ -86,9 +86,10 @@ extern int yydebug;
     VECES = 287,                   /* VECES  */
     HASTA = 288,                   /* HASTA  */
     FIN_EJECUTA = 289,             /* FIN_EJECUTA  */
-    NUM = 290,                     /* NUM  */
-    ID = 291,                      /* ID  */
-    CAD = 292                      /* CAD  */
+    LEE = 290,                     /* LEE  */
+    NUM = 291,                     /* NUM  */
+    ID = 292,                      /* ID  */
+    CAD = 293                      /* CAD  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -129,9 +130,10 @@ extern int yydebug;
 #define VECES 287
 #define HASTA 288
 #define FIN_EJECUTA 289
-#define NUM 290
-#define ID 291
-#define CAD 292
+#define LEE 290
+#define NUM 291
+#define ID 292
+#define CAD 293
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -142,7 +144,7 @@ union YYSTYPE
     int num;
     char *string;
 
-#line 146 "y.tab.h"
+#line 148 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

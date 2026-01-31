@@ -26,7 +26,7 @@ char* new_label() {
 /* Tokens de verbos y preposiciones */
 %token MUEVE A SUMA RESTA DE MULTIPLICA POR DIVIDE ENTRE DANDO CALCULA FIN_CALCULA 
 %token SI ENTONCES SINO FIN_SI ES NO MAYOR MENOR QUE IGUAL
-%token EJECUTA VECES HASTA FIN_EJECUTA
+%token EJECUTA VECES HASTA FIN_EJECUTA LEE
 %token <num> NUM
 %token <string> ID CAD
 
@@ -38,7 +38,7 @@ char* new_label() {
 %left '*' '/'
 
 /* Tipos de los no terminales */
-%type <string> axioma sentencias sentencia lista_literales literal expr asignar comparar condicion bucle
+%type <string> axioma sentencias sentencia lista_literales literal expr asignar comparar condicion bucle leer
 
 %%
 
@@ -60,7 +60,16 @@ sentencia: MUESTRA lista_literales PUNTO { $$ = $2; }
          | asignar PUNTO { $$ = $1; }
 		 | comparar PUNTO { $$ = $1; }
 		 | bucle PUNTO { $$ = $1; }
+		 | leer PUNTO { $$ = $1; }
          ;
+		 
+		 
+/* Solicitar un valor y asignarlo a la variable */
+leer: LEE ID {
+    secure(asprintf(&$$, "\tlee\n\tvalori %s\n\tswap\n\tasigna\n", $2));
+    free($2);
+}
+;
 		 
 /* Estructura IF-THEN-ELSE */
 comparar: SI condicion ENTONCES sentencias FIN_SI {

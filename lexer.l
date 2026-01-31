@@ -38,6 +38,8 @@
 "HASTA"       { return HASTA; }
 "FIN-EJECUTA" { return FIN_EJECUTA; }
 
+"LEE"         { return LEE; }
+
 "MUEVE"       { return MUEVE; }
 "A"           { return A; }
 "SUMA"        { return SUMA; }

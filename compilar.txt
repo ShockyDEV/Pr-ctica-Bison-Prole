@@ -17,3 +17,4 @@ Probar con el archivo eje0.cbl
 ./cobol_compiler < ejemplosP2y3_2C/pruebitaritmetica2.cbl
 ./cobol_compiler < ejemplosP2y3_2C/pruebitacondicion.cbl
 ./cobol_compiler < ejemplosP2y3_2C/pruebitabucles.cbl
+./cobol_compiler < ejemplosP2y3_2C/pruebitaLEE.cbl
