@@ -24,7 +24,7 @@ char* new_label() {
 /* Tokens de estructura y E/S */
 %token PROGRAMA INICIO FIN PUNTO COMA MUESTRA
 /* Tokens de verbos y preposiciones */
-%token MUEVE A SUMA RESTA DE MULTIPLICA POR DIVIDE ENTRE DANDO
+%token MUEVE A SUMA RESTA DE MULTIPLICA POR DIVIDE ENTRE DANDO CALCULA FIN_CALCULA
 %token <num> NUM
 %token <string> ID CAD
 
@@ -36,7 +36,7 @@ char* new_label() {
 %left '*' '/'
 
 /* Tipos de los no terminales */
-%type <string> axioma sentencias sentencia lista_literales literal expr asignar aritmetica
+%type <string> axioma sentencias sentencia lista_literales literal expr asignar 
 
 %%
 
@@ -56,19 +56,21 @@ sentencias: sentencia { $$ = $1; }
 
 sentencia: MUESTRA lista_literales PUNTO { $$ = $2; }
          | asignar PUNTO { $$ = $1; }
-         | aritmetica PUNTO { $$ = $1; }
          ;
-
-/* valori ID, evaluar expresión, swap, asigna */
-asignar: MUEVE expr A ID {
-            secure(asprintf(&$$, "\tvalori %s\n%s\tswap\n\tasigna\n", $4, $2));
-            free($2); free($4);
-         }
-       ;
-
-/* aritmetica */
-aritmetica: 
-    SUMA expr A ID {
+		 
+/* Cambios de valor */
+asignar: 
+    MUEVE expr A ID {
+        /* valori ID, expr, swap, asigna */
+        secure(asprintf(&$$, "\tvalori %s\n%s\tswap\n\tasigna\n", $4, $2));
+        free($2); free($4);
+    }
+    | CALCULA ID '=' expr FIN_CALCULA {
+        /* Lógica idéntica a MUEVE: ID ($2) y expr ($4) */
+        secure(asprintf(&$$, "\tvalori %s\n%s\tswap\n\tasigna\n", $2, $4));
+        free($2); free($4);
+    }
+    | SUMA expr A ID {
         /* valord ID, expr, add, valori ID, swap, asigna */
         secure(asprintf(&$$, "\tvalord %s\n%s\tadd\n\tvalori %s\n\tswap\n\tasigna\n", $4, $2, $4));
         free($2); free($4);

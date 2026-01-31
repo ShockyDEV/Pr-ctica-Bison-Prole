@@ -8,7 +8,7 @@
 
 %%
 
-   /* 1. Comentarios (Prioridad) */
+   /*  Comentarios siempre son prioridad */
 ^[ ]{6}\*.* { /* ignorar línea completa */ }
 "\*>".* { /* ignorar comentario de línea */ }
 
@@ -28,6 +28,8 @@
 "DIVIDE"      { return DIVIDE; }
 "ENTRE"       { return ENTRE; }
 "DANDO"       { return DANDO; }
+"CALCULA"     { return CALCULA; }
+"FIN-CALCULA" { return FIN_CALCULA; }
 
    /* Identificadores */
 [A-Z][A-Z0-9]*("-"[A-Z0-9]+)* { 
