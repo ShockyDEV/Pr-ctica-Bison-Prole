@@ -1,0 +1,14 @@
+cd /mnt/c/Users/enriq/OneDrive/Escritorio/bison
+
+
+Generar el analizador sintáctico (crea y.tab.c y y.tab.h)
+bison -dy parser.y
+
+Generar el analizador léxico (crea lex.yy.c)
+flex lexer.l
+
+Compilarlo todo con GCC
+gcc y.tab.c lex.yy.c -o cobol_compiler
+
+Probar con el archivo eje0.cbl
+./cobol_compiler < "C:/Users/enriq/OneDrive/Escritorio/bison/ejemplosP2y3_2C/eje0.cbl"c

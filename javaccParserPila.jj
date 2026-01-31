@@ -1,0 +1,379 @@
+/* 
+   Autor: Enrique González Gutiérrez
+   Fecha: Enero 2026
+*/
+
+
+
+
+/*
+ * La secuencia de comandos necesaria para obtener el ejecutable es:
+ *     javacc Practica2.jj 
+ *     javac *.java 
+ *     java -cp . test 
+	   java practica2 ejemplosP2y3_2C/eje0.cbl
+ */
+
+options {
+  STATIC = false;
+  IGNORE_CASE = true;
+}
+
+PARSER_BEGIN(CobolCompiler)
+  import java.io.FileInputStream;
+  import java.io.InputStream;
+
+public class CobolCompiler {
+
+		// Buffer para ir guardando el código de pila generado 
+    StringBuilder outputBuffer = new StringBuilder();
+	
+		// Contador para etiquetas
+		int labelCounter = 0;
+		
+		String newLabel() { 
+      return "LBL" + (labelCounter++);
+    }
+	
+	void genera_linea(String linea, boolean conSangria) {
+      if (conSangria) {
+        outputBuffer.append("    " + linea + "\n"); 
+      } else {
+        outputBuffer.append(linea + "\n"); 
+      }
+    }
+	
+	 public static void main(String args[]) throws ParseException {
+        CobolCompiler parser;
+        InputStream input;
+        try {
+          if (args.length == 0) {
+              input = System.in;
+          } else {
+              input = new FileInputStream(args[0]);
+          }
+          parser = new CobolCompiler(input);
+          parser.Axioma(); 
+		  
+		  System.out.print(parser.outputBuffer.toString());
+		   
+        } catch (java.io.FileNotFoundException e) {
+          System.err.println("error: archivo no encontrado");
+        } catch (ParseException e) {
+          System.err.println("error de sintaxis: " + e.getMessage());
+        } catch (TokenMgrError e) {
+          System.err.println("error lexico: " + e.getMessage());
+        }
+    }
+  }
+PARSER_END(CobolCompiler)
+
+/* analizador lexico - lo que el parser debe de ignorar */
+
+SKIP : 
+{
+  //  espacios y saltos de linea
+    " " | "\t" | "\n" | "\r"
+  //  comentario nº 1, *> hasta fin de linea
+  | < "*>" (~["\n", "\r"])* >
+  //  comentario nº2, asterisco en columna 7
+  | < ("\n" | "\r" | "\r\n") "      *" (~["\n", "\r"])* >
+}
+
+/* TOKEN: Estas son válidas para nuestro lenguaje.
+  Si no lo tenemos aquí o en SKIP dará error. */
+  
+	TOKEN : 
+{
+  // estructura del programa 
+    < PROGRAMA: "PROGRAM" >
+  | < INICIO: "BEGIN" >
+  | < FIN: "END" >
+  | < PUNTO: "." >
+  | < COMA: "," >
+
+  // verbos y asignación 
+  | < MUEVE: "MOVE" >
+  | < A: "TO" >
+  | < SUMA: "ADD" >
+  | < RESTA: "SUBTRACT" >
+  | < DE: "FROM" >
+  | < MULTIPLICA: "MULTIPLY" >
+  | < POR: "BY" >
+  | < DIVIDE: "DIVIDE" >
+  | < LEE: "ACCEPT" >
+  | < MUESTRA: "DISPLAY" >
+
+  // condicionales y comparacion 
+  | < SI: "IF" >
+  | < ENTONCES: "THEN" >
+  | < SINO: "ELSE" >
+  | < ES: "IS" >
+  | < NO: "NOT" >
+  | < MAYOR: "GREATER" >
+  | < MENOR: "LESS" >
+  | < QUE: "THAN" >
+  | < IGUAL: "EQUAL" >
+
+  // bucles 
+  | < MIENTRAS: "WHILE" >
+  | < HACER: "DO" >
+  | < VARYING: "VARYING" >
+  
+  
+  // prueba
+  | < DANDO: "GIVING" >
+  | < ENTRE: "INTO" > // Por si usas DIVIDE A INTO B
+
+  // operadores y paréntesis 
+  | < MAS: "+" >
+  | < MENOS: "-" >
+  | < MULT: "*" >
+  | < DIV: "/" >
+  | < PA: "(" >
+  | < PC: ")" >
+
+  // datos
+  | < ID: ["A"-"Z"] (["A"-"Z","0"-"9"])* ( "-" (["A"-"Z","0"-"9"])+ )* >
+  | < NUM: (["0"-"9"])+ ( "." (["0"-"9"])+ )? ( ["e","E"] (["+","-"])? (["0"-"9"])+ )? >
+  | < CAD: "\"" (~["\"","\n","\r"])* "\"" | "'" (~["'","\n","\r"])* "'" >
+}
+
+/* analizador sintactico */ 
+
+// Primera regla
+void Axioma() :
+{}
+{
+  <PROGRAMA> <ID> <PUNTO>
+  <INICIO>
+  // { genera_linea("; - INFRAESTRUCTURA base  -", false); }
+  Sentencias()
+  <FIN> <PUNTO>
+  <EOF>
+}
+
+// Distribuidor de verbos
+void Sentencias() :
+{}
+{
+  ( Sentencia() )+
+}
+
+// Distribuidor de verbos (singular) 
+void Sentencia() :
+{}
+{
+  (
+      Io() 
+    | Asignar()
+    | Bucle()
+    | Comparar()
+  )
+  
+  // { genera_linea("; Detectada sentencia en: " + newLabel(), true); }
+  
+  <PUNTO>
+}
+
+//  Reglas auxiliares 
+
+// Entrada/Salida
+void Io() :
+{ Token t; int n; }
+{
+    <LEE> t = <ID>
+      { genera_linea("lee " + t.image, true); }
+  | <MUESTRA> 
+      n = ListaLiterales() // LLama a la regla que cuenta literales
+      { genera_linea("print " + n, true); }
+}
+
+
+//  cuántos literales hay en la lista
+int ListaLiterales() :
+{ int n = 1; }
+{
+  Literal() 
+  ( <COMA> Literal() { n++; } )* { return n; }
+}
+
+
+// Un literal puede ser un identificador, un número o una cadena
+void Literal() :
+{ Token t; }
+{
+    t = <ID> 
+      { genera_linea("valord " + t.image, true); }
+  | t = <NUM> 
+      { genera_linea("mete " + t.image, true); }
+  | t = <CAD>
+      { genera_linea("metecad " + t.image, true); }
+}
+  
+void Asignar() :
+{ Token t_destino; }
+{
+    ( <MUEVE> Expr() <A> t_destino = <ID>
+      { genera_linea("valori " + t_destino.image, true); genera_linea("swap", true); genera_linea("asigna", true); } )
+      
+  | ( <SUMA> Expr() <A> t_destino = <ID>
+      { genera_linea("valord " + t_destino.image, true); genera_linea("add", true); 
+        genera_linea("valori " + t_destino.image, true); genera_linea("swap", true); genera_linea("asigna", true); } )
+        
+  | ( <RESTA> Expr() <DE> t_destino = <ID>
+      { genera_linea("valord " + t_destino.image, true); genera_linea("swap", true); genera_linea("sub", true);
+        genera_linea("valori " + t_destino.image, true); genera_linea("swap", true); genera_linea("asigna", true); } )
+
+  | // MULTIPLY Expr BY Expr GIVING ID
+    ( <MULTIPLICA> Expr() <POR> Expr() <DANDO> t_destino = <ID>
+      { 
+        genera_linea("mul", true); 
+        genera_linea("valori " + t_destino.image, true); 
+        genera_linea("swap", true); 
+        genera_linea("asigna", true); 
+      } )
+
+  | // DIVIDE Expr INTO Expr GIVING ID
+    ( <DIVIDE> Expr() <ENTRE> Expr() <DANDO> t_destino = <ID>
+      { 
+        genera_linea("div", true); 
+        genera_linea("valori " + t_destino.image, true); 
+        genera_linea("swap", true); 
+        genera_linea("asigna", true); 
+      } )
+}
+
+// jerarquia matematica
+
+void Expr() : {} {
+  Mult() ( <MAS> Mult() { genera_linea("add", true); } 
+         | <MENOS> Mult() { genera_linea("sub", true); } )*
+}
+
+void Mult() : {} {
+  Val() ( <MULT> Val() { genera_linea("mul", true); } 
+        | <DIV> Val() { genera_linea("div", true); } )*
+}
+
+void Val() : { Token t; } {
+    t = <NUM> { genera_linea("mete " + t.image, true); } 
+  | t = <ID>  { genera_linea("valord " + t.image, true); }
+  | <PA> Expr() <PC> 
+}
+
+// estructuras de control
+
+// Estructura condicional IF-THEN-ELSE-END
+
+void Comparar() :
+{ String lbl_else, lbl_fin = null; } // Inicializamos para saber si hay SINO
+{
+    <SI> BooleanExpr() 
+    {
+        lbl_else = newLabel();
+        genera_linea("sifalsovea " + lbl_else, true);
+    }
+    <ENTONCES> Sentencias()
+    ( 
+        <SINO> 
+        { 
+            lbl_fin = newLabel(); 
+            genera_linea("vea " + lbl_fin, true); 
+            genera_linea(lbl_else + ":", false); 
+        }
+        Sentencias() 
+    )?
+    <FIN>
+    {
+        // Si hubo SINO, ponemos la etiqueta final. Si no, cerramos con la del ELSE.
+        if (lbl_fin != null) {
+            genera_linea(lbl_fin + ":", false);
+        } else {
+            genera_linea(lbl_else + ":", false);
+        }
+    }
+}
+
+// Bucle WHILE 
+void Bucle() :
+{ String lbl_inicio, lbl_fin; Token t_var; }
+{
+    ( // 1: WHILE 
+      <MIENTRAS> 
+      { 
+        lbl_inicio = newLabel(); 
+        lbl_fin = newLabel();
+        genera_linea(lbl_inicio + ":", false); 
+      }
+      BooleanExpr() 
+      { genera_linea("sifalsovea " + lbl_fin, true); }
+      <HACER> Sentencias() 
+      <FIN>
+      { 
+        genera_linea("vea " + lbl_inicio, true); 
+        genera_linea(lbl_fin + ":", false); 
+      }
+    )
+  | ( // VARYING (Incremento Dinámico) 
+      <VARYING> t_var = <ID> 
+      <DE> Expr() //  Inicialización
+      {
+        genera_linea("valori " + t_var.image, true);
+        genera_linea("swap", true);
+        genera_linea("asigna", true);
+        
+        lbl_inicio = newLabel();
+        lbl_fin = newLabel();
+        genera_linea(lbl_inicio + ":", false);
+      }
+      <A> Expr() //  Condición de parada
+      {
+        genera_linea("valord " + t_var.image, true);
+        genera_linea("swap", true);
+        genera_linea("sub", true);
+        genera_linea("sifalsovea " + lbl_fin, true);
+      }
+      // Incremento: si hay 'BY' se evalúa Expr, si no, se mete un 1
+      ( <POR> Expr() | { genera_linea("mete 1", true); } ) 
+      <HACER> Sentencias()
+      <FIN>
+      {
+        // Sumar el incremento al contador
+        genera_linea("valori " + t_var.image, true);
+        genera_linea("valord " + t_var.image, true);
+        genera_linea("swap", true); // Ponemos el valor de la variable encima del incremento
+        genera_linea("add", true);
+        genera_linea("asigna", true);
+        
+        genera_linea("vea " + lbl_inicio, true);
+        genera_linea(lbl_fin + ":", false);
+      }
+    )
+}
+
+// Regla diagrama booleanExpr
+void BooleanExpr() : 
+{ Token t_no = null; Token t_op; }
+{
+  Expr() <ES> ( t_no = <NO> )? 
+  ( 
+      ( t_op = <MAYOR> | t_op = <MENOR> ) <QUE> 
+      Expr() 
+      {
+        // Si es MAYOR: A - B. Si es MENOR: B - A (usando swap)
+        if (t_op.kind == MAYOR) { genera_linea("sub", true); } 
+        else { genera_linea("swap", true); genera_linea("sub", true); }
+      }
+    | <IGUAL> <A> Expr() 
+      { 
+        // A EQUAL TO B -> not(A xor B)
+        genera_linea("xor", true); 
+        genera_linea("not", true); 
+      }
+  ) 
+  { 
+    // Si puso NOT, invertimos el resultado final
+    if (t_no != null) genera_linea("not", true); 
+  }
+}
