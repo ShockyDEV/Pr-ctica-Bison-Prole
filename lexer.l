@@ -8,36 +8,56 @@
 
 %%
 
-   /* Comentarios: 6 espacios + asterisco o secuencia *> */
-^[ ]{6}\*.* { /* ignorar */ }
-"\*>".* { /* ignorar */ }
+   /* 1. Comentarios (Prioridad) */
+^[ ]{6}\*.* { /* ignorar línea completa */ }
+"\*>".* { /* ignorar comentario de línea */ }
 
-"PROGRAMA"  { return PROGRAMA; }
-"INICIO"    { return INICIO; }
-"FIN"       { return FIN; }
-"MUESTRA"   { return MUESTRA; }
+   /*  Palabras Reservadas (van antes que el ID) */
+"PROGRAMA"    { return PROGRAMA; }
+"INICIO"      { return INICIO; }
+"FIN"         { return FIN; }
+"MUESTRA"     { return MUESTRA; }
 
-   /*  Mayúsculas y números, guiones en el medio */
+"MUEVE"       { return MUEVE; }
+"A"           { return A; }
+"SUMA"        { return SUMA; }
+"RESTA"       { return RESTA; }
+"DE"          { return DE; }
+"MULTIPLICA"  { return MULTIPLICA; }
+"POR"         { return POR; }
+"DIVIDE"      { return DIVIDE; }
+"ENTRE"       { return ENTRE; }
+"DANDO"       { return DANDO; }
+
+   /* Identificadores */
 [A-Z][A-Z0-9]*("-"[A-Z0-9]+)* { 
     yylval.string = strdup(yytext); 
     return ID; 
 }
 
-   /* Números positivos */
-[0-9]+      { 
+   /* Literales */
+[0-9]+ { 
     yylval.num = atoi(yytext); 
     return NUM; 
 }
 
-   /* Cadenas con comillas simples o dobles */
 (\"[^\"]*\")|(\'[^\']*\') { 
     yylval.string = strdup(yytext); 
     return CAD; 
 }
 
-[ \t\n\r]+  { /* ignorar espacios */ }
-"."         { return PUNTO; }
-","         { return COMA; }
-.           { return yytext[0]; }
+   /* Operadores y puntuación */
+"+"     { return '+'; }
+"-"     { return '-'; }
+"*"     { return '*'; }
+"/"     { return '/'; }
+"("     { return '('; }
+")"     { return ')'; }
+"."     { return PUNTO; }
+","     { return COMA; }
+
+[ \t\n\r]+ { /* ignora espacios */ }
+
+. { return yytext[0]; }
 
 %%

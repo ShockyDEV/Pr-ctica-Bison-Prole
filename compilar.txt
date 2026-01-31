@@ -11,4 +11,6 @@ Compilarlo todo con GCC
 gcc y.tab.c lex.yy.c -o cobol_compiler
 
 Probar con el archivo eje0.cbl
-./cobol_compiler < "C:/Users/enriq/OneDrive/Escritorio/bison/ejemplosP2y3_2C/eje0.cbl"c
+./cobol_compiler < ejemplosP2y3_2C/eje0.cbl
+./cobol_compiler < ejemplosP2y3_2C/pruebita.cbl
+./cobol_compiler < ejemplosP2y3_2C/pruebitaritmetica.cbl

@@ -60,9 +60,19 @@ extern int yydebug;
     PUNTO = 261,                   /* PUNTO  */
     COMA = 262,                    /* COMA  */
     MUESTRA = 263,                 /* MUESTRA  */
-    NUM = 264,                     /* NUM  */
-    ID = 265,                      /* ID  */
-    CAD = 266                      /* CAD  */
+    MUEVE = 264,                   /* MUEVE  */
+    A = 265,                       /* A  */
+    SUMA = 266,                    /* SUMA  */
+    RESTA = 267,                   /* RESTA  */
+    DE = 268,                      /* DE  */
+    MULTIPLICA = 269,              /* MULTIPLICA  */
+    POR = 270,                     /* POR  */
+    DIVIDE = 271,                  /* DIVIDE  */
+    ENTRE = 272,                   /* ENTRE  */
+    DANDO = 273,                   /* DANDO  */
+    NUM = 274,                     /* NUM  */
+    ID = 275,                      /* ID  */
+    CAD = 276                      /* CAD  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -77,9 +87,19 @@ extern int yydebug;
 #define PUNTO 261
 #define COMA 262
 #define MUESTRA 263
-#define NUM 264
-#define ID 265
-#define CAD 266
+#define MUEVE 264
+#define A 265
+#define SUMA 266
+#define RESTA 267
+#define DE 268
+#define MULTIPLICA 269
+#define POR 270
+#define DIVIDE 271
+#define ENTRE 272
+#define DANDO 273
+#define NUM 274
+#define ID 275
+#define CAD 276
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -90,7 +110,7 @@ union YYSTYPE
     int num;
     char *string;
 
-#line 94 "y.tab.h"
+#line 114 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
