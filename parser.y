@@ -25,6 +25,7 @@ char* new_label() {
 %token PROGRAMA INICIO FIN PUNTO COMA MUESTRA
 /* Tokens de verbos y preposiciones */
 %token MUEVE A SUMA RESTA DE MULTIPLICA POR DIVIDE ENTRE DANDO CALCULA FIN_CALCULA
+%token SI ENTONCES SINO FIN_SI ES NO MAYOR MENOR QUE IGUAL
 %token <num> NUM
 %token <string> ID CAD
 
@@ -36,7 +37,7 @@ char* new_label() {
 %left '*' '/'
 
 /* Tipos de los no terminales */
-%type <string> axioma sentencias sentencia lista_literales literal expr asignar 
+%type <string> axioma sentencias sentencia lista_literales literal expr asignar comparar condicion
 
 %%
 
@@ -56,6 +57,45 @@ sentencias: sentencia { $$ = $1; }
 
 sentencia: MUESTRA lista_literales PUNTO { $$ = $2; }
          | asignar PUNTO { $$ = $1; }
+		 | comparar PUNTO { $$ = $1; }
+         ;
+		 
+/* Estructura IF-THEN-ELSE */
+comparar: SI condicion ENTONCES sentencias FIN_SI {
+            char *l1 = new_label();
+            secure(asprintf(&$$, "%s\tsifalsovea %s\n%s%s:\n", $2, l1, $4, l1));
+            free($2); free($4); free(l1);
+         }
+         | SI condicion ENTONCES sentencias SINO sentencias FIN_SI {
+            char *l1 = new_label();
+            char *l2 = new_label();
+            secure(asprintf(&$$, "%s\tsifalsovea %s\n%s\tvea %s\n%s:\n%s%s:\n", 
+                            $2, l1, $4, l2, l1, $6, l2));
+            free($2); free($4); free($6); free(l1); free(l2);
+         }
+         ;
+		 
+		 /* Lógica de comparación */
+condicion: expr ES MAYOR QUE expr {
+            /* A > B es true si (A - B) > 0 */
+            secure(asprintf(&$$, "%s%s\tsub\n", $1, $5));
+            free($1); free($5);
+         }
+         | expr ES MENOR QUE expr {
+            /* A < B es true si (B - A) > 0 */
+            secure(asprintf(&$$, "%s%s\tswap\n\tsub\n", $1, $5));
+            free($1); free($5);
+         }
+         | expr ES IGUAL A expr {
+            /* A == B es true si NOT(A XOR B) */
+            secure(asprintf(&$$, "%s%s\txor\n\tnot\n", $1, $5));
+            free($1); free($5);
+         }
+		| expr ES NO IGUAL A expr {
+			/* expr(1) ES(2) NO(3) IGUAL(4) A(5) expr(6) */
+			secure(asprintf(&$$, "%s%s\txor\n", $1, $6));
+			free($1); free($6);
+		 }
          ;
 		 
 /* Cambios de valor */

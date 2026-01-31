@@ -18,6 +18,18 @@
 "FIN"         { return FIN; }
 "MUESTRA"     { return MUESTRA; }
 
+	/* Tokens condicion */
+"SI"          { return SI; }
+"ENTONCES"    { return ENTONCES; }
+"SINO"        { return SINO; }
+"FIN-SI"      { return FIN_SI; }
+"ES"          { return ES; }
+"NO"          { return NO; }
+"MAYOR"       { return MAYOR; }
+"MENOR"       { return MENOR; }
+"QUE"         { return QUE; }
+"IGUAL"       { return IGUAL; }
+
 "MUEVE"       { return MUEVE; }
 "A"           { return A; }
 "SUMA"        { return SUMA; }

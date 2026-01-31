@@ -72,9 +72,19 @@ extern int yydebug;
     DANDO = 273,                   /* DANDO  */
     CALCULA = 274,                 /* CALCULA  */
     FIN_CALCULA = 275,             /* FIN_CALCULA  */
-    NUM = 276,                     /* NUM  */
-    ID = 277,                      /* ID  */
-    CAD = 278                      /* CAD  */
+    SI = 276,                      /* SI  */
+    ENTONCES = 277,                /* ENTONCES  */
+    SINO = 278,                    /* SINO  */
+    FIN_SI = 279,                  /* FIN_SI  */
+    ES = 280,                      /* ES  */
+    NO = 281,                      /* NO  */
+    MAYOR = 282,                   /* MAYOR  */
+    MENOR = 283,                   /* MENOR  */
+    QUE = 284,                     /* QUE  */
+    IGUAL = 285,                   /* IGUAL  */
+    NUM = 286,                     /* NUM  */
+    ID = 287,                      /* ID  */
+    CAD = 288                      /* CAD  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -101,9 +111,19 @@ extern int yydebug;
 #define DANDO 273
 #define CALCULA 274
 #define FIN_CALCULA 275
-#define NUM 276
-#define ID 277
-#define CAD 278
+#define SI 276
+#define ENTONCES 277
+#define SINO 278
+#define FIN_SI 279
+#define ES 280
+#define NO 281
+#define MAYOR 282
+#define MENOR 283
+#define QUE 284
+#define IGUAL 285
+#define NUM 286
+#define ID 287
+#define CAD 288
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -114,7 +134,7 @@ union YYSTYPE
     int num;
     char *string;
 
-#line 118 "y.tab.h"
+#line 138 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
