@@ -1,13 +1,13 @@
 PROGRAMA NESTED-STRUCTURES.
 INICIO
-   MUEVE 5 A A.
+   MUEVE 5 A VAR-A.
    MUEVE 10 A B.
    EJECUTA
-     RESTA 1 DE A.
+     RESTA 1 DE VAR-A.
      EJECUTA
        RESTA 1 DE B.
        EJECUTA
-            MUEVE A * B A C.
+            MUEVE VAR-A * B A C.
             MULTIPLICA 10 POR C DANDO D.
             SI C ES MAYOR QUE D ENTONCES
                 MUESTRA C.
@@ -30,10 +30,10 @@ INICIO
                 HASTA QUE VAR2 ES MAYOR QUE 100
                 FIN-EJECUTA.
             FIN-SI.
-       HASTA QUE A ES MAYOR QUE B
+       HASTA QUE VAR-A ES MAYOR QUE B
        FIN-EJECUTA.
      HASTA QUE B ES IGUAL A 0
      FIN-EJECUTA.
-   HASTA QUE A ES IGUAL A 0
+   HASTA QUE VAR-A ES IGUAL A 0
    FIN-EJECUTA.
 FIN.
