@@ -18,3 +18,10 @@ Probar con el archivo eje0.cbl
 ./cobol_compiler < ejemplosP2y3_2C/pruebitacondicion.cbl
 ./cobol_compiler < ejemplosP2y3_2C/pruebitabucles.cbl
 ./cobol_compiler < ejemplosP2y3_2C/pruebitaLEE.cbl
+./cobol_compiler < ejemplosP2y3_2C/pruebitanotacion.cbl
+
+./cobol_compiler < ejemplosP2y3_2C/eje0español.cbl
+./cobol_compiler < ejemplosP2y3_2C/eje1español.cbl
+./cobol_compiler < ejemplosP2y3_2C/eje2español.cbl
+./cobol_compiler < ejemplosP2y3_2C/eje3español.cbl
+./cobol_compiler < ejemplosP2y3_2C/eje4español.cbl

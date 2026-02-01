@@ -9,8 +9,9 @@
 %%
 
    /*  Comentarios siempre son prioridad */
-^[ ]{6}\*.* { /* ignorar línea completa */ }
-"\*>".* { /* ignorar comentario de línea */ }
+\*>[^\n]*        { /* ignorar */ }
+^[ \t]*\*[^\n]*  { /* ignorar */ }
+
 
    /*  Palabras Reservadas (van antes que el ID) */
 "PROGRAMA"    { return PROGRAMA; }
@@ -80,7 +81,8 @@
 "."     { return PUNTO; }
 ","     { return COMA; }
 
-[ \t\n\r]+ { /* ignora espacios */ }
+[ \t\r]+                { /* ignora espacios */ }
+\n                      { /* ignora saltos de línea */ }
 
 . { return yytext[0]; }
 
