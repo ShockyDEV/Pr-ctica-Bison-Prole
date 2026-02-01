@@ -87,9 +87,9 @@ extern int yydebug;
     HASTA = 288,                   /* HASTA  */
     FIN_EJECUTA = 289,             /* FIN_EJECUTA  */
     LEE = 290,                     /* LEE  */
-    NUM = 291,                     /* NUM  */
-    ID = 292,                      /* ID  */
-    CAD = 293                      /* CAD  */
+    ID = 291,                      /* ID  */
+    CAD = 292,                     /* CAD  */
+    NUM = 293                      /* NUM  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -131,20 +131,19 @@ extern int yydebug;
 #define HASTA 288
 #define FIN_EJECUTA 289
 #define LEE 290
-#define NUM 291
-#define ID 292
-#define CAD 293
+#define ID 291
+#define CAD 292
+#define NUM 293
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 19 "parser.y"
+#line 23 "parser.y"
 
-    int num;
     char *string;
 
-#line 148 "y.tab.h"
+#line 147 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

@@ -60,8 +60,8 @@
 }
 
    /* Literales */
-[0-9]+ { 
-    yylval.num = atoi(yytext); 
+[0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+)? { 
+    yylval.string = strdup(yytext); 
     return NUM; 
 }
 

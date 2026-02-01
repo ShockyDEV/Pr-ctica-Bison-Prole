@@ -4,9 +4,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+/*#define YYDEBUG 1 */
+
 int yylex();
 void yyerror(const char *s);
 void secure(int ifOk);
+
+extern int yydebug;
 
 int label_count = 0;
 char* new_label() {
@@ -17,7 +21,6 @@ char* new_label() {
 %}
 
 %union {
-    int num;
     char *string;
 }
 
@@ -27,8 +30,7 @@ char* new_label() {
 %token MUEVE A SUMA RESTA DE MULTIPLICA POR DIVIDE ENTRE DANDO CALCULA FIN_CALCULA 
 %token SI ENTONCES SINO FIN_SI ES NO MAYOR MENOR QUE IGUAL
 %token EJECUTA VECES HASTA FIN_EJECUTA LEE
-%token <num> NUM
-%token <string> ID CAD
+%token <string> ID CAD NUM
 
 /* He usado directivas de asociatividad para evitar
  que la gramática sea demasiado profunda y facilitar la concatenación de las instrucciones
@@ -166,7 +168,7 @@ expr: expr '+' expr { secure(asprintf(&$$, "%s%s\tadd\n", $1, $3)); free($1); fr
     | expr '*' expr { secure(asprintf(&$$, "%s%s\tmul\n", $1, $3)); free($1); free($3); }
     | expr '/' expr { secure(asprintf(&$$, "%s%s\tdiv\n", $1, $3)); free($1); free($3); }
     | '(' expr ')'  { $$ = $2; }
-    | NUM           { secure(asprintf(&$$, "\tmete %d\n", $1)); }
+    | NUM           { secure(asprintf(&$$, "\tmete %s\n", $1)); }
     | ID            { secure(asprintf(&$$, "\tvalord %s\n", $1)); free($1); }
     ;
 
@@ -181,9 +183,14 @@ lista_literales: literal {
                  }
                ;
 
-literal: ID  { secure(asprintf(&$$, "\tvalord %s\n", $1)); free($1); }
-       | NUM { secure(asprintf(&$$, "\tmete %d\n", $1)); }
-       | CAD { secure(asprintf(&$$, "\tmetecad %s\n", $1)); free($1); }
+literal: expr { 
+            /*  cualquier cálculo sea un literal */
+            $$ = $1; 
+         }
+       | CAD  { 
+            secure(asprintf(&$$, "\tmetecad %s\n", $1)); 
+            free($1); 
+         }
        ;
 
 %%
@@ -197,6 +204,7 @@ void yyerror(const char *s) {
 }
 
 int main() {
+	/*yydebug = 1;*/
     yyparse();
     return 0;
 }
